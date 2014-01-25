@@ -14,15 +14,17 @@
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
 #include "SpriteEditorPlugin.hpp"
+#include "SSpriteFile.hpp"
 #include "SpriteDocument.hpp"
 #include "MainWindowBase.hpp"
+#include <BinaryReader.hpp>
 #include <QAction>
 #include <QMenu>
 
 SpriteEditorPlugin* SpriteEditorPlugin::m_instance = NULL;
 
 SpriteEditorPlugin::SpriteEditorPlugin()
-    : m_newDocumentAction(new QAction("Sprite Container Document", this)),
+    : m_actionNewDocument(new QAction("Sprite Container Document", this)),
     m_enabled(true)
 {
     m_instance = this;
@@ -30,15 +32,17 @@ SpriteEditorPlugin::SpriteEditorPlugin()
 
 SpriteEditorPlugin::~SpriteEditorPlugin()
 {
-    m_mainWindow->newDocumentMenu()->removeAction(m_newDocumentAction);
-    delete m_newDocumentAction;
-    m_newDocumentAction = NULL;
+    m_mainWindow->newDocumentMenu()->removeAction(m_actionNewDocument);
+    delete m_actionNewDocument;
+    m_actionNewDocument = NULL;
 }
 
 void SpriteEditorPlugin::initialize(MainWindowBase *mainWindow)
 {
     m_mainWindow = mainWindow;
-    m_mainWindow->newDocumentMenu()->addAction(m_newDocumentAction);
+    m_mainWindow->newDocumentMenu()->addAction(m_actionNewDocument);
+    connect(m_actionNewDocument, SIGNAL(triggered()), this, SLOT(onNewDocument()));
+
 }
 
 QString SpriteEditorPlugin::filter() const
@@ -118,7 +122,21 @@ DocumentBase* SpriteEditorPlugin::loadFile(const QString& file) const
 
 bool SpriteEditorPlugin::canLoad(const QString& filename)
 {
-    return (!QString::compare(QFileInfo(filename).suffix(), extension(), Qt::CaseInsensitive));
+    if (!QString::compare(QFileInfo(filename).suffix(), extension(), Qt::CaseInsensitive))
+    {
+        try
+        {
+            zelda::io::BinaryReader reader(filename.toStdString());
+            if (reader.readUInt32() == SSpriteFile::Magic)
+                return true;
+        }
+        catch(...)
+        {
+            // Fail silently
+        }
+    }
+
+    return false;
 }
 
 bool SpriteEditorPlugin::hasUpdater() const
@@ -163,7 +181,7 @@ QIcon SpriteEditorPlugin::icon() const
 
 void SpriteEditorPlugin::onNewDocument()
 {
-
+    emit newDocument(new SpriteDocument(this));
 }
 
 #if QT_VERSION < 0x050000

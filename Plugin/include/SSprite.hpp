@@ -32,6 +32,7 @@ public:
      */
     int stateId(int index) const;
     void setStateIds(std::vector<int> ids);
+    std::vector<int> stateIds() const;
     Uint32 stateCount() const;
     void setCurrentState(const Uint32 id);
 

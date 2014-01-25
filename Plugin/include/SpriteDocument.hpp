@@ -9,10 +9,13 @@ class SpriteDocument : public DocumentBase
 {
     Q_OBJECT
 public:
-    SpriteDocument(const PluginInterface* loader, const QString& file = QString());
+    explicit SpriteDocument(const PluginInterface* loader, const QString& file = QString());
+    ~SpriteDocument();
+
+    bool save(const QString &filename);
 
 private:
-    SSpriteFile* m_spriteFile;
+    SSpriteFile* m_spriteContainer;
 };
 
 #endif // SPRITEDOCUMENT_HPP

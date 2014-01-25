@@ -70,6 +70,11 @@ void SSprite::setStateIds(std::vector<int> ids)
     m_stateIds = ids;
 }
 
+std::vector<int> SSprite::stateIds() const
+{
+    return m_stateIds;
+}
+
 Uint32 SSprite::stateCount() const
 {
     return m_stateIds.size();

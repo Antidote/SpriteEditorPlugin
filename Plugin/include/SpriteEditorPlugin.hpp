@@ -67,7 +67,7 @@ signals:
 public slots:
     void onNewDocument();
 private:
-    QAction* m_newDocumentAction;
+    QAction* m_actionNewDocument;
     bool m_enabled;
     QString m_path;
     QIcon m_icon;

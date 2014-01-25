@@ -8,6 +8,9 @@ class SpriteCanvas : public QWidget
 
 public:
     SpriteCanvas(QWidget* parent = 0);
+
+private:
+
 };
 
 #endif // SPRITECANVAS_HPP

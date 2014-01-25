@@ -12,79 +12,72 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QSplitter" name="splitter_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+    <widget class="QSplitter" name="splitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <widget class="QSplitter" name="splitter">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="spriteCanvasLayout">
-        <item>
-         <widget class="QLabel" name="spriteCanvasLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>&lt;b&gt;Canvas&lt;/b&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="SpriteCanvas" name="spriteCanvas" native="true"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget1">
-       <layout class="QVBoxLayout" name="spriteSheetLayout">
-        <item>
-         <widget class="QLabel" name="spriteSheetLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>&lt;b&gt;Sprite Sheet&lt;/b&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="spriteSheetCanvas" native="true"/>
-        </item>
-       </layout>
-      </widget>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="spriteCanvasLayout">
+       <item>
+        <widget class="QLabel" name="spriteCanvasLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>&lt;b&gt;Canvas&lt;/b&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="SpriteCanvas" name="spriteCanvas" native="true"/>
+       </item>
+      </layout>
      </widget>
-     <widget class="QSplitter" name="splitter_2">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="QListWidget" name="listWidget"/>
-      <widget class="QTreeWidget" name="treeWidget">
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
-      </widget>
+     <widget class="QWidget" name="layoutWidget1">
+      <layout class="QVBoxLayout" name="spriteSheetLayout">
+       <item>
+        <widget class="QLabel" name="spriteSheetLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>&lt;b&gt;Sprite Sheet&lt;/b&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="spriteSheetCanvas" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QSplitter" name="splitter_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QTreeWidget" name="spriteTree">
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Sprites</string>
+       </property>
+      </column>
      </widget>
     </widget>
    </item>
@@ -99,5 +92,25 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>spriteTree</sender>
+   <signal>currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)</signal>
+   <receiver>SpriteEditorFrame</receiver>
+   <slot>onTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>594</x>
+     <y>319</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)</slot>
+ </slots>
 </ui>

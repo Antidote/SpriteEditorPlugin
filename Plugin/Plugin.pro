@@ -19,7 +19,7 @@ INCLUDEPATH += \
     ../libzelda/include \
     ../Updater/include
 
-DESTDIR = $$OUT_PWD/../plugins
+DESTDIR = $$OUT_PWD/../../build/plugins
 UI_DIR = ui
 
 QMAKE_CXXFLAGS = -std=c++0x
@@ -62,7 +62,8 @@ SOURCES += \
     src/SSpriteFileReader.cpp \
     src/SSpriteFileWriter.cpp \
     src/SSpriteFrame.cpp \
-    src/SSpritePart.cpp
+    src/SSpritePart.cpp \
+    src/NameTreeItem.cpp
 
 HEADERS += \
     include/SpriteEditorPlugin.hpp\
@@ -78,7 +79,8 @@ HEADERS += \
     include/SSpriteFileReader.hpp \
     include/SSpriteFileWriter.hpp \
     include/SSpriteFrame.hpp \
-    include/SSpritePart.hpp
+    include/SSpritePart.hpp \
+    include/NameTreeItem.hpp
 
 OTHER_FILES += \
     spriteeditor.json
@@ -87,4 +89,6 @@ FORMS += \
     ui/SpriteInfo.ui \
     ui/SpriteEditorFrame.ui \
     ui/SpriteTree.ui
+
+include(../qtpropertybrowser/src/qtpropertybrowser.pri);
 

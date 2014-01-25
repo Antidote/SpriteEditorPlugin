@@ -1,5 +1,5 @@
-#ifndef SSpRITEPART_HPP
-#define SSpRITEPART_HPP
+#ifndef SSPRITEPART_HPP
+#define SSPRITEPART_HPP
 
 #include <Types.hpp>
 #include <vector>
