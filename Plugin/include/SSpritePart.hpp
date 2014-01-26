@@ -25,8 +25,12 @@ public:
     bool hasCollision() const;
 
     void addFrame(SSpriteFrame* frame);
+    void advanceFrame();
+    void retreatFrame();
     SSpriteFrame* frame(int id);
     void setFrames(std::vector<SSpriteFrame*> frames);
+    SSpriteFrame* currentFrame();
+    int currentFrameID();
     std::vector<SSpriteFrame*> frames() const;
     Uint32 frameCount() const;
 

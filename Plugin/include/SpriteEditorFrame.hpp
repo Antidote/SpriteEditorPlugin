@@ -2,6 +2,7 @@
 #define SPRITEFRAME_HPP
 
 #include <QFrame>
+#include <QPixmap>
 
 namespace Ui {
 class SpriteEditorFrame;
@@ -37,11 +38,13 @@ private slots:
     void setFrameOffsetItems(const QString& text, const QVector2D& offset);
     void setFrameSizeItems(const QSize& size);
     void setNameItem(const QString& name, const QVariant& data);
+    void onZoomChanged(const QString& zoom);
 private:
     Ui::SpriteEditorFrame *ui;
     QTreeWidgetItem* m_rootItem;
     QtTreePropertyBrowser* m_propertyBrowser;
     SSpriteFile* m_spriteContainer;
+    QPixmap m_testPixmap;
 };
 
 #endif // SPRITEFRAME_HPP

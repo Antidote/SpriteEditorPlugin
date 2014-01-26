@@ -122,3 +122,8 @@ std::vector<SSpritePart*> SSprite::parts() const
 {
     return m_parts;
 }
+
+SSpriteFile* SSprite::container() const
+{
+    return m_root;
+}

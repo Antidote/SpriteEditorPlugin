@@ -43,6 +43,7 @@ public:
 
     std::vector<SSpritePart*> parts() const;
 
+    SSpriteFile* container() const;
 private:
     SSpriteFile* m_root;
     std::string  m_name;

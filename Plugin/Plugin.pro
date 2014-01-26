@@ -88,7 +88,8 @@ OTHER_FILES += \
 FORMS += \
     ui/SpriteInfo.ui \
     ui/SpriteEditorFrame.ui \
-    ui/SpriteTree.ui
+    ui/SpriteTree.ui \
+    ui/SpriteCanvas.ui
 
 include(../qtpropertybrowser/src/qtpropertybrowser.pri);
 

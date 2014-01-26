@@ -50,6 +50,24 @@ void SSpritePart::addFrame(SSpriteFrame* frame)
     m_frames.push_back(frame);
 }
 
+void SSpritePart::advanceFrame()
+{
+    if (m_frameIndex < m_frames.size() - 1)
+    {
+        m_frameIndex++;
+        m_currentFrame = m_frames[m_frameIndex];
+    }
+}
+
+void SSpritePart::retreatFrame()
+{
+    if (m_frameIndex > 0)
+    {
+        m_frameIndex--;
+        m_currentFrame = m_frames[m_frameIndex];
+    }
+}
+
 SSpriteFrame* SSpritePart::frame(int id)
 {
     if (id < 0 || id >= (int)m_frames.size())
@@ -80,6 +98,16 @@ void SSpritePart::setFrames(std::vector<SSpriteFrame*> frames)
     }
 
     m_frames = frames;
+}
+
+SSpriteFrame* SSpritePart::currentFrame()
+{
+    return m_currentFrame;
+}
+
+int SSpritePart::currentFrameID()
+{
+    return m_frameIndex;
 }
 
 std::vector<SSpriteFrame*> SSpritePart::frames() const

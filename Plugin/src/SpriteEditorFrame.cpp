@@ -9,6 +9,9 @@
 #include <QtTreePropertyBrowser>
 #include <QStyledItemDelegate>
 #include <QSpinBox>
+#include "SpriteEditorPlugin.hpp"
+#include <MainWindowBase.hpp>
+#include <QDialog>
 
 class NoEditDelegate: public QStyledItemDelegate
 {
@@ -38,6 +41,17 @@ SpriteEditorFrame::SpriteEditorFrame(QWidget *parent) :
     ui->setupUi(this);
     m_propertyBrowser = new QtTreePropertyBrowser;
     ui->splitter_2->insertWidget(0, m_propertyBrowser);
+
+    connect(ui->advanceFrameButton, SIGNAL(clicked()), ui->spriteCanvas, SLOT(advanceFrame()));
+    connect(ui->retreatFrameButton, SIGNAL(clicked()), ui->spriteCanvas, SLOT(retreatFrame()));
+
+
+    MainWindowBase* mw = SpriteEditorPlugin::instance()->mainWindow();
+    if (mw->engineDataPath().exists())
+    {
+        //m_testPixmap.load(mw->engineDataPath().absolutePath() + "/sprites/Link/red.png");
+        //ui->spriteSheetLabel->setPixmap(m_testPixmap);
+    }
 }
 
 SpriteEditorFrame::~SpriteEditorFrame()
@@ -51,6 +65,7 @@ void SpriteEditorFrame::setSpriteContainer(SSpriteFile* container)
     {
         delete m_spriteContainer;
         m_spriteContainer = container;
+
         if (m_rootItem)
             delete m_rootItem;
         m_rootItem = new QTreeWidgetItem(QStringList() << "root");
@@ -82,6 +97,11 @@ void SpriteEditorFrame::setSpriteContainer(SSpriteFile* container)
 
 void SpriteEditorFrame::onTreeItemChanged(QTreeWidgetItem* item1, QTreeWidgetItem* item2)
 {
+    if (item1->data(0, SpriteRole).isValid())
+    {
+        SSprite* sprite = item1->data(0, SpriteRole).value<SSprite*>();
+        ui->spriteCanvas->setCurrentSprite(sprite);
+    }
 }
 
 void SpriteEditorFrame::setFrameOffsetItems(const QString& text, const QVector2D& offset)
@@ -94,4 +114,14 @@ void SpriteEditorFrame::setFrameSizeItems(const QSize& size)
 
 void SpriteEditorFrame::setNameItem(const QString& name, const QVariant& data)
 {
+}
+
+void SpriteEditorFrame::onZoomChanged(const QString& zoom)
+{
+    QString value = zoom;
+    value = value.remove('%');
+    bool ok = false;
+    qreal zoomFactor = value.toInt(&ok);
+    if (ok)
+        ui->spriteCanvas->setZoom(zoomFactor);
 }
