@@ -8,12 +8,19 @@ namespace Ui {
 class SpriteEditorFrame;
 }
 
-class SSpriteFile;
-class SSprite;
-class SSpritePart;
-class SSpriteFrame;
+namespace zelda
+{
+namespace Sakura
+{
+class SpriteFile;
+class Sprite;
+class SpriteFrame;
+class SpritePart;
+}
+}
+
 class QTreeWidgetItem;
-class QtTreePropertyBrowser;
+class ObjectController;
 
 class SpriteEditorFrame : public QFrame
 {
@@ -31,7 +38,10 @@ public:
     explicit SpriteEditorFrame(QWidget *parent = 0);
     ~SpriteEditorFrame();
 
-    void setSpriteContainer(SSpriteFile* container);
+    void setSpriteContainer(zelda::Sakura::SpriteFile* container);
+
+signals:
+    void modified();
 
 private slots:
     void onTreeItemChanged(QTreeWidgetItem* item1, QTreeWidgetItem* item2);
@@ -39,11 +49,14 @@ private slots:
     void setFrameSizeItems(const QSize& size);
     void setNameItem(const QString& name, const QVariant& data);
     void onZoomChanged(const QString& zoom);
+    void onNameChanged(const QString& name);
 private:
     Ui::SpriteEditorFrame *ui;
     QTreeWidgetItem* m_rootItem;
-    QtTreePropertyBrowser* m_propertyBrowser;
-    SSpriteFile* m_spriteContainer;
+    ObjectController* m_propertyBrowser;
+    zelda::Sakura::SpriteFile*  m_spriteContainer;
+    zelda::Sakura::Sprite*      m_currentSprite;
+    zelda::Sakura::SpriteFrame* m_currentFrame;
     QPixmap m_testPixmap;
 };
 

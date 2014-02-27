@@ -1,44 +1,55 @@
 ﻿#include "SpriteDocument.hpp"
 #include "SpriteEditorFrame.hpp"
 #include "SpriteEditorPlugin.hpp"
-#include "SpriteTree.hpp"
-#include "SSpriteFileReader.hpp"
-#include "SSpriteFileWriter.hpp"
-#include "SSpriteFile.hpp"
+#include "SpriteFileReader.hpp"
+#include "SpriteFileWriter.hpp"
+#include "SpriteFile.hpp"
 #include <MainWindowBase.hpp>
 #include <QMainWindow>
 #include <Exception.hpp>
 #include <QDebug>
+#include <SpriteFile.hpp>
+#include <SpriteFrame.hpp>
 
 SpriteDocument::SpriteDocument(const PluginInterface* loader, const QString& file)
-    : DocumentBase(loader, file)
+    : DocumentBase(loader, file),
+      m_spriteContainer(NULL)
 {
     m_widget = new SpriteEditorFrame();
-    SpriteEditorFrame* sef = qobject_cast<SpriteEditorFrame*>(m_widget);
-
-    if (!file.isEmpty())
-    {
-        try
-        {
-            SSpriteFileReader reader(file.toStdString());
-            m_spriteContainer = reader.readFile();
-        }
-        catch(zelda::error::Exception e)
-        {
-            qDebug() << e.message().c_str();
-        }
-    }
-    else
-    {
-        m_spriteContainer = new SSpriteFile;
-
-    }
-    sef->setSpriteContainer(m_spriteContainer);
 }
 
 SpriteDocument::~SpriteDocument()
 {
     delete m_spriteContainer;
+    m_spriteContainer = NULL;
+}
+
+bool SpriteDocument::loadFile()
+{
+    SpriteEditorFrame* sef = qobject_cast<SpriteEditorFrame*>(m_widget);
+
+    if (!filePath().isEmpty())
+    {
+        try
+        {
+            zelda::io::SpriteFileReader reader(filePath().toStdString());
+            m_spriteContainer = reader.readFile();
+            connect(sef, SIGNAL(modified()), this, SLOT(onModified()));
+            sef->setSpriteContainer(m_spriteContainer);
+        }
+        catch(...)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        m_spriteContainer = new zelda::Sakura::SpriteFile;
+        if (!m_spriteContainer)
+            return false;
+    }
+
+    return true;
 }
 
 bool SpriteDocument::save(const QString& filepath)
@@ -48,9 +59,9 @@ bool SpriteDocument::save(const QString& filepath)
 
     try
     {
-        SSpriteFileWriter writer(filePath().toStdString());
+        zelda::io::SpriteFileWriter writer(filePath().toStdString());
         writer.writeFile(m_spriteContainer);
-
+        setDirty(false);
         return true;
     }
     catch(...)
@@ -59,4 +70,15 @@ bool SpriteDocument::save(const QString& filepath)
     }
 
     return false;
+}
+
+bool SpriteDocument::reload()
+{
+    return loadFile();
+}
+
+void SpriteDocument::onModified()
+{
+    setDirty(true);
+    emit modified();
 }

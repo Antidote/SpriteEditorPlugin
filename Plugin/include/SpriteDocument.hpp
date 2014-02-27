@@ -3,8 +3,15 @@
 
 #include <DocumentBase.hpp>
 
+namespace zelda
+{
+namespace Sakura
+{
+class SpriteFile;
+}
+}
+
 class SpriteTree;
-class SSpriteFile;
 class SpriteDocument : public DocumentBase
 {
     Q_OBJECT
@@ -13,9 +20,12 @@ public:
     ~SpriteDocument();
 
     bool save(const QString &filename);
-
+    bool loadFile();
+    bool reload();
+private slots:
+    void onModified();
 private:
-    SSpriteFile* m_spriteContainer;
+    zelda::Sakura::SpriteFile* m_spriteContainer;
 };
 
 #endif // SPRITEDOCUMENT_HPP

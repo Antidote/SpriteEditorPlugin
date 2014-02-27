@@ -42,11 +42,11 @@
 #include <QMetaProperty>
 #include <QVBoxLayout>
 #include <QScrollArea>
-#include "objectcontroller.h"
-#include "qtvariantproperty.h"
-#include "qtgroupboxpropertybrowser.h"
-#include "qttreepropertybrowser.h"
-#include "qtpropertybrowser.h"
+#include "ObjectController.hpp"
+#include <QtVariantProperty>
+#include <QtGroupBoxPropertyBrowser>
+#include <QtTreePropertyBrowser>
+#include <qtpropertybrowser.h>
 
 class ObjectControllerPrivate
 {
@@ -389,3 +389,4 @@ QObject *ObjectController::object() const
     return d_ptr->m_object;
 }
 
+#include "moc_ObjectController.cpp"

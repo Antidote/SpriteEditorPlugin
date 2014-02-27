@@ -14,7 +14,7 @@
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
 #include "SpriteEditorPlugin.hpp"
-#include "SSpriteFile.hpp"
+#include <SpriteFile.hpp>
 #include "SpriteDocument.hpp"
 #include "MainWindowBase.hpp"
 #include <BinaryReader.hpp>
@@ -117,7 +117,13 @@ void SpriteEditorPlugin::setEnabled(const bool enable)
 
 DocumentBase* SpriteEditorPlugin::loadFile(const QString& file) const
 {
-    return new SpriteDocument(this, file);
+    SpriteDocument* ret = new SpriteDocument(this, file);
+    if (ret->loadFile())
+        return ret;
+
+    delete ret;
+    ret = NULL;
+    return NULL;
 }
 
 bool SpriteEditorPlugin::canLoad(const QString& filename)
@@ -127,7 +133,7 @@ bool SpriteEditorPlugin::canLoad(const QString& filename)
         try
         {
             zelda::io::BinaryReader reader(filename.toStdString());
-            if (reader.readUInt32() == SSpriteFile::Magic)
+            if (reader.readUInt32() == zelda::Sakura::SpriteFile::Magic)
                 return true;
         }
         catch(...)

@@ -1,9 +1,6 @@
 #include "NameTreeItem.hpp"
-#include "SSprite.hpp"
-#include "SSpritePart.hpp"
-
-Q_DECLARE_METATYPE(SSprite*)
-Q_DECLARE_METATYPE(SSpritePart*)
+#include "Sprite.hpp"
+#include "SpritePart.hpp"
 
 NameTreeItem::NameTreeItem(int type)
     : QTreeWidgetItem(type)
@@ -51,17 +48,17 @@ void NameTreeItem::setData(int column, int role, const QVariant& value)
     {
         if (data(0, Qt::UserRole).isValid())
         {
-            SSprite* sprite = data(0, Qt::UserRole).value<SSprite*>();
+            zelda::Sakura::Sprite* sprite = data(0, Qt::UserRole).value<zelda::Sakura::Sprite*>();
             if (sprite)
             {
-                sprite->setName(value.toString().toStdString());
+                sprite->setName(value.toString());
                 QTreeWidgetItem::setData(column, role, value);
                 return;
             }
-            SSpritePart* part= data(0, Qt::UserRole).value<SSpritePart*>();
+            zelda::Sakura::SpritePart* part= data(0, Qt::UserRole).value<zelda::Sakura::SpritePart*>();
             if (part)
             {
-                part->setName(value.toString().toStdString());
+                part->setName(value.toString());
                 QTreeWidgetItem::setData(column, role, value);
                 return;
             }

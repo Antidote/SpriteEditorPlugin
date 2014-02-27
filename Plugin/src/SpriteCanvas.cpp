@@ -1,8 +1,8 @@
 ﻿#include "SpriteCanvas.hpp"
-#include "SSprite.hpp"
-#include "SSpriteFile.hpp"
-#include "SSpritePart.hpp"
-#include "SSpriteFrame.hpp"
+#include <Sprite.hpp>
+#include <SpriteFile.hpp>
+#include <SpritePart.hpp>
+#include <SpriteFrame.hpp>
 #include "SpriteEditorPlugin.hpp"
 #include "ui_SpriteCanvas.h"
 #include <MainWindowBase.hpp>
@@ -10,8 +10,6 @@
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QWheelEvent>
-
-Q_DECLARE_METATYPE(SSpritePart*)
 
 SpriteCanvas::SpriteCanvas(QWidget* parent)
     : QGraphicsView(parent),
@@ -23,12 +21,11 @@ SpriteCanvas::SpriteCanvas(QWidget* parent)
       m_maxScale(5.f)
 {
     ui->setupUi(this);
-    MainWindowBase* mw = SpriteEditorPlugin::instance()->mainWindow();
-    m_currentPixmap.load(QString(mw->engineDataPath().absolutePath() + "/sprites/Link/green.png"));
     m_graphicsScene = new QGraphicsScene(this);
     setScene(m_graphicsScene);
     setInteractive(true);
     connect(m_graphicsScene, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
+    connect(m_graphicsScene, SIGNAL(changed(QList<QRectF>)), this, SLOT(onSelectionChanged()));
 }
 
 SpriteCanvas::~SpriteCanvas()
@@ -36,63 +33,78 @@ SpriteCanvas::~SpriteCanvas()
     delete m_graphicsScene;
 }
 
-void SpriteCanvas::setCurrentSprite(SSprite* cur)
+void SpriteCanvas::setCurrentSprite(zelda::Sakura::Sprite* cur)
 {
     m_currentSprite = cur;
     updateGraphicsScene();
 }
 
-SSprite* SpriteCanvas::currentSprite() const
+zelda::Sakura::Sprite* SpriteCanvas::currentSprite() const
 {
     return m_currentSprite;
 }
 
 void SpriteCanvas::setCurrentFrame(quint32 curFrame)
 {
-    m_currentFrame = curFrame;
+    m_currentSprite->setCurrentFrame(curFrame);
+    updateGraphicsScene();
 }
 
 void SpriteCanvas::advanceFrame()
 {
-    for (SSpritePart* part : m_currentSprite->parts())
-        part->advanceFrame();
-
+    m_currentSprite->advanceFrame();
     updateGraphicsScene();
 }
 
 void SpriteCanvas::retreatFrame()
 {
-    for (SSpritePart* part : m_currentSprite->parts())
-        part->retreatFrame();
-
+    m_currentSprite->retreatFrame();
     updateGraphicsScene();
 }
 
 void SpriteCanvas::onSelectionChanged()
 {
+
 }
 
 void SpriteCanvas::updateGraphicsScene()
 {
+    if (!m_currentSprite)
+        return;
+
+    MainWindowBase* mw = SpriteEditorPlugin::instance()->mainWindow();
+    zelda::Sakura::SpriteFile* spriteFile = m_currentSprite->root();
+    if (!m_currentPixmap.load(QString(mw->engineDataPath().absolutePath() + "/" + QString::fromStdString(spriteFile->texture(m_currentSprite->currentState())->Filepath))))
+        return;
+
+    m_currentFrame = m_currentSprite->currentFrame();
     m_graphicsScene->clear();
-    m_canvasRect = m_graphicsScene->addRect(-m_currentSprite->container()->originX(), (-m_currentSprite->container()->originY()/2)+2, m_currentSprite->container()->size().width(),
-                                                       m_currentSprite->container()->size().height());
+    m_canvasRect = m_graphicsScene->addRect(-m_currentSprite->container()->origin().x(), (-m_currentSprite->container()->origin().y()/2) + 1,
+                                            m_currentSprite->container()->size().width(),
+                                            m_currentSprite->container()->size().height());
+
     m_canvasRect->setPen(QPen());
     m_canvasRect->setFlag(QGraphicsItem::ItemIsSelectable);
-    for (SSpritePart* part : m_currentSprite->parts())
+    m_currentFrame = m_currentSprite->currentFrame();
+    foreach (zelda::Sakura::SpritePart* part, m_currentFrame->parts())
     {
-        SSpriteFrame* frame = part->currentFrame();
-        QPixmap pix = m_currentPixmap.copy(QRect(frame->textureOffset().toPoint(), frame->size()));
+        // TODO: Is everything here really needed?
+        QPixmap pix = m_currentPixmap.copy(part->textureOffset().x(), part->textureOffset().y(),
+                                           part->size().width(),
+                                           part->size().height());
         QGraphicsPixmapItem* pixmapItem = new QGraphicsPixmapItem(m_canvasRect);
-        pixmapItem->setData(PartKey, QVariant::fromValue<SSpritePart*>(part));
-        pixmapItem->setTransformOriginPoint(m_currentSprite->container()->origin().toPoint());
+        pixmapItem->setData(PartKey, QVariant::fromValue<zelda::Sakura::SpritePart*>(part));
+        pixmapItem->setTransformOriginPoint(m_currentSprite->container()->origin());
         pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
         pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
+        pixmapItem->setFlag(QGraphicsItem::ItemIsPanel);
+        pixmapItem->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+        pixmapItem->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
         pixmapItem->setAcceptedMouseButtons(Qt::AllButtons);
         pixmapItem->setPixmap(pix);
-        pixmapItem->scale(frame->flippedHorizontally() ? -1 : 1,
-                          frame->flippedVertically() ? -1 : 1);
-        pixmapItem->translate(frame->offset().x(), frame->offset().y());
+        pixmapItem->scale(part->flippedHorizontally() ? -1 : 1,
+                          part->flippedVertically() ? -1 : 1);
+        pixmapItem->translate(part->offset().x(), part->offset().y());
 
     }
 }

@@ -8,7 +8,14 @@ namespace Ui {
 class SpriteCanvas;
 }
 
-class SSprite;
+namespace zelda
+{
+namespace Sakura
+{
+class Sprite;
+class SpriteFrame;
+}
+}
 class QPaintEvent;
 class QGraphicsScene;
 class QWheelEvent;
@@ -20,8 +27,8 @@ public:
     SpriteCanvas(QWidget* parent = 0);
     ~SpriteCanvas();
 
-    void setCurrentSprite(SSprite* cur);
-    SSprite* currentSprite() const;
+    void setCurrentSprite(zelda::Sakura::Sprite* cur);
+    zelda::Sakura::Sprite* currentSprite() const;
 
     void setCurrentFrame(quint32 curFrame);
 
@@ -40,14 +47,14 @@ private:
     enum {PartKey = 65535};
 
     Ui::SpriteCanvas* ui;
-    SSprite*   m_currentSprite;
-    quint32    m_currentFrame;
-    QPixmap    m_currentPixmap;
-    QGraphicsScene* m_graphicsScene;
-    QGraphicsRectItem* m_canvasRect;
-    qreal      m_curScaleFactor;
-    qreal      m_minScale;
-    qreal      m_maxScale;
+    zelda::Sakura::Sprite*      m_currentSprite;
+    zelda::Sakura::SpriteFrame* m_currentFrame;
+    QPixmap                     m_currentPixmap;
+    QGraphicsScene*             m_graphicsScene;
+    QGraphicsRectItem*          m_canvasRect;
+    qreal                       m_curScaleFactor;
+    qreal                       m_minScale;
+    qreal                       m_maxScale;
 };
 
 #endif // SPRITECANVAS_HPP

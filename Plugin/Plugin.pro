@@ -11,7 +11,8 @@ TARGET = spriteeditorplugin
 TEMPLATE = lib
 CONFIG += plugin
 
-DEFINES += SPRITEEDITORPLUGIN_LIBRARY
+DEFINES += SPRITEEDITORPLUGIN_LIBRARY \
+    LIBZELDA_USE_QT
 
 INCLUDEPATH += \
     include \
@@ -55,32 +56,21 @@ SOURCES += \
     src/SpriteDocument.cpp \
     src/SpriteInfo.cpp \
     src/SpriteEditorFrame.cpp \
-    src/SpriteTree.cpp \
     src/SpriteCanvas.cpp \
-    src/SSprite.cpp \
-    src/SSpriteFile.cpp \
-    src/SSpriteFileReader.cpp \
-    src/SSpriteFileWriter.cpp \
-    src/SSpriteFrame.cpp \
-    src/SSpritePart.cpp \
-    src/NameTreeItem.cpp
+    src/NameTreeItem.cpp \
+    src/ObjectController.cpp \
+    src/GraphicsScene.cpp
 
 HEADERS += \
     include/SpriteEditorPlugin.hpp\
     include/spriteeditorplugin_global.hpp \
     include/SpriteDocument.hpp \
     include/SpriteInfo.hpp \
-    include/SpritePart.hpp \
     include/SpriteEditorFrame.hpp \
-    include/SpriteTree.hpp \
     include/SpriteCanvas.hpp \
-    include/SSprite.hpp \
-    include/SSpriteFile.hpp \
-    include/SSpriteFileReader.hpp \
-    include/SSpriteFileWriter.hpp \
-    include/SSpriteFrame.hpp \
-    include/SSpritePart.hpp \
-    include/NameTreeItem.hpp
+    include/NameTreeItem.hpp \
+    include/ObjectController.hpp \
+    include/GraphicsScene.hpp
 
 OTHER_FILES += \
     spriteeditor.json
