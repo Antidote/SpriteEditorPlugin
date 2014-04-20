@@ -14,6 +14,8 @@ CONFIG += plugin
 DEFINES += SPRITEEDITORPLUGIN_LIBRARY \
     ATHENA_USE_QT
 
+include(../Athena/Athena.pri)
+
 INCLUDEPATH += \
     include \
     ../PluginFramework/include \
@@ -30,7 +32,6 @@ LIBS += \
     -L$$OUT_PWD/../Updater -lupdater
 
 CONFIG(release, release|debug){
-    LIBS += -L$$OUT_PWD/../Athena/lib -lAthena
     DEFINES -= SS_DEBUG
     # We don't want the objects, or MOC sources
     # in the project directory, so tell qmake
@@ -41,7 +42,6 @@ CONFIG(release, release|debug){
 
 
 CONFIG(debug, debug|release){
-    LIBS += -L$$OUT_PWD/../Athena/lib -lAthena-d
     DEFINES += SS_DEBUG
     # We don't want the objects, or MOC sources
     # in the project directory, so tell qmake
