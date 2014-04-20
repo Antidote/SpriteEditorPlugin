@@ -8,7 +8,7 @@ namespace Ui {
 class SpriteEditorFrame;
 }
 
-namespace zelda
+namespace Athena
 {
 namespace Sakura
 {
@@ -38,7 +38,7 @@ public:
     explicit SpriteEditorFrame(QWidget *parent = 0);
     ~SpriteEditorFrame();
 
-    void setSpriteContainer(zelda::Sakura::SpriteFile* container);
+    void setSpriteContainer(Athena::Sakura::SpriteFile* container);
 
 signals:
     void modified();
@@ -54,9 +54,9 @@ private:
     Ui::SpriteEditorFrame *ui;
     QTreeWidgetItem* m_rootItem;
     ObjectController* m_propertyBrowser;
-    zelda::Sakura::SpriteFile*  m_spriteContainer;
-    zelda::Sakura::Sprite*      m_currentSprite;
-    zelda::Sakura::SpriteFrame* m_currentFrame;
+    Athena::Sakura::SpriteFile*  m_spriteContainer;
+    Athena::Sakura::Sprite*      m_currentSprite;
+    Athena::Sakura::SpriteFrame* m_currentFrame;
     QPixmap m_testPixmap;
 };
 

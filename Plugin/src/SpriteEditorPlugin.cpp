@@ -14,10 +14,10 @@
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
 #include "SpriteEditorPlugin.hpp"
-#include <SpriteFile.hpp>
+#include <Athena/SpriteFile.hpp>
 #include "SpriteDocument.hpp"
 #include "MainWindowBase.hpp"
-#include <BinaryReader.hpp>
+#include <Athena/BinaryReader.hpp>
 #include <QAction>
 #include <QMenu>
 
@@ -132,8 +132,8 @@ bool SpriteEditorPlugin::canLoad(const QString& filename)
     {
         try
         {
-            zelda::io::BinaryReader reader(filename.toStdString());
-            if (reader.readUInt32() == zelda::Sakura::SpriteFile::Magic)
+            Athena::io::BinaryReader reader(filename.toStdString());
+            if (reader.readUint32() == Athena::Sakura::SpriteFile::Magic)
                 return true;
         }
         catch(...)

@@ -1,14 +1,18 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-DEFINES += LIBZELDA_USE_QT
+DEFINES += ATHENA_USE_QT
 
-Plugin.depends += libzelda \
+Plugin.depends += \
+        Athena \
         PluginFramework \
         Updater
 		
 SUBDIRS += \
-    libzelda \
+    Athena \
     Updater \
     PluginFramework \
     Plugin
+
+OTHER_FILES += \
+    .travis.yml

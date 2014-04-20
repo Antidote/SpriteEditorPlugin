@@ -3,7 +3,7 @@
 
 #include <DocumentBase.hpp>
 
-namespace zelda
+namespace Athena
 {
 namespace Sakura
 {
@@ -25,7 +25,7 @@ public:
 private slots:
     void onModified();
 private:
-    zelda::Sakura::SpriteFile* m_spriteContainer;
+    Athena::Sakura::SpriteFile* m_spriteContainer;
 };
 
 #endif // SPRITEDOCUMENT_HPP

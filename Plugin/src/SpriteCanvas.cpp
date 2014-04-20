@@ -1,8 +1,8 @@
 ﻿#include "SpriteCanvas.hpp"
-#include <Sprite.hpp>
-#include <SpriteFile.hpp>
-#include <SpritePart.hpp>
-#include <SpriteFrame.hpp>
+#include <Athena/Sprite.hpp>
+#include <Athena/SpriteFile.hpp>
+#include <Athena/SpritePart.hpp>
+#include <Athena/SpriteFrame.hpp>
 #include "SpriteEditorPlugin.hpp"
 #include "ui_SpriteCanvas.h"
 #include <MainWindowBase.hpp>
@@ -33,13 +33,13 @@ SpriteCanvas::~SpriteCanvas()
     delete m_graphicsScene;
 }
 
-void SpriteCanvas::setCurrentSprite(zelda::Sakura::Sprite* cur)
+void SpriteCanvas::setCurrentSprite(Athena::Sakura::Sprite* cur)
 {
     m_currentSprite = cur;
     updateGraphicsScene();
 }
 
-zelda::Sakura::Sprite* SpriteCanvas::currentSprite() const
+Athena::Sakura::Sprite* SpriteCanvas::currentSprite() const
 {
     return m_currentSprite;
 }
@@ -73,7 +73,7 @@ void SpriteCanvas::updateGraphicsScene()
         return;
 
     MainWindowBase* mw = SpriteEditorPlugin::instance()->mainWindow();
-    zelda::Sakura::SpriteFile* spriteFile = m_currentSprite->root();
+    Athena::Sakura::SpriteFile* spriteFile = m_currentSprite->root();
     if (!m_currentPixmap.load(QString(mw->engineDataPath().absolutePath() + "/" + QString::fromStdString(spriteFile->texture(m_currentSprite->currentState())->Filepath))))
         return;
 
@@ -86,14 +86,14 @@ void SpriteCanvas::updateGraphicsScene()
     m_canvasRect->setPen(QPen());
     m_canvasRect->setFlag(QGraphicsItem::ItemIsSelectable);
     m_currentFrame = m_currentSprite->currentFrame();
-    foreach (zelda::Sakura::SpritePart* part, m_currentFrame->parts())
+    foreach (Athena::Sakura::SpritePart* part, m_currentFrame->parts())
     {
         // TODO: Is everything here really needed?
         QPixmap pix = m_currentPixmap.copy(part->textureOffset().x(), part->textureOffset().y(),
                                            part->size().width(),
                                            part->size().height());
         QGraphicsPixmapItem* pixmapItem = new QGraphicsPixmapItem(m_canvasRect);
-        pixmapItem->setData(PartKey, QVariant::fromValue<zelda::Sakura::SpritePart*>(part));
+        pixmapItem->setData(PartKey, QVariant::fromValue<Athena::Sakura::SpritePart*>(part));
         pixmapItem->setTransformOriginPoint(m_currentSprite->container()->origin());
         pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
         pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);

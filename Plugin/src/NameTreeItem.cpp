@@ -1,6 +1,6 @@
 #include "NameTreeItem.hpp"
-#include "Sprite.hpp"
-#include "SpritePart.hpp"
+#include "Athena/Sprite.hpp"
+#include "Athena/SpritePart.hpp"
 
 NameTreeItem::NameTreeItem(int type)
     : QTreeWidgetItem(type)
@@ -48,14 +48,14 @@ void NameTreeItem::setData(int column, int role, const QVariant& value)
     {
         if (data(0, Qt::UserRole).isValid())
         {
-            zelda::Sakura::Sprite* sprite = data(0, Qt::UserRole).value<zelda::Sakura::Sprite*>();
+            Athena::Sakura::Sprite* sprite = data(0, Qt::UserRole).value<Athena::Sakura::Sprite*>();
             if (sprite)
             {
                 sprite->setName(value.toString());
                 QTreeWidgetItem::setData(column, role, value);
                 return;
             }
-            zelda::Sakura::SpritePart* part= data(0, Qt::UserRole).value<zelda::Sakura::SpritePart*>();
+            Athena::Sakura::SpritePart* part= data(0, Qt::UserRole).value<Athena::Sakura::SpritePart*>();
             if (part)
             {
                 part->setName(value.toString());

@@ -8,7 +8,7 @@ namespace Ui {
 class SpriteCanvas;
 }
 
-namespace zelda
+namespace Athena
 {
 namespace Sakura
 {
@@ -27,8 +27,8 @@ public:
     SpriteCanvas(QWidget* parent = 0);
     ~SpriteCanvas();
 
-    void setCurrentSprite(zelda::Sakura::Sprite* cur);
-    zelda::Sakura::Sprite* currentSprite() const;
+    void setCurrentSprite(Athena::Sakura::Sprite* cur);
+    Athena::Sakura::Sprite* currentSprite() const;
 
     void setCurrentFrame(quint32 curFrame);
 
@@ -47,8 +47,8 @@ private:
     enum {PartKey = 65535};
 
     Ui::SpriteCanvas* ui;
-    zelda::Sakura::Sprite*      m_currentSprite;
-    zelda::Sakura::SpriteFrame* m_currentFrame;
+    Athena::Sakura::Sprite*      m_currentSprite;
+    Athena::Sakura::SpriteFrame* m_currentFrame;
     QPixmap                     m_currentPixmap;
     QGraphicsScene*             m_graphicsScene;
     QGraphicsRectItem*          m_canvasRect;

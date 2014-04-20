@@ -1,15 +1,15 @@
 ﻿#include "SpriteDocument.hpp"
 #include "SpriteEditorFrame.hpp"
 #include "SpriteEditorPlugin.hpp"
-#include "SpriteFileReader.hpp"
-#include "SpriteFileWriter.hpp"
-#include "SpriteFile.hpp"
 #include <MainWindowBase.hpp>
 #include <QMainWindow>
-#include <Exception.hpp>
 #include <QDebug>
-#include <SpriteFile.hpp>
-#include <SpriteFrame.hpp>
+#include <Athena/SpriteFileReader.hpp>
+#include <Athena/SpriteFileWriter.hpp>
+#include <Athena/SpriteFile.hpp>
+#include <Athena/SpriteFile.hpp>
+#include <Athena/SpriteFrame.hpp>
+#include <Athena/Exception.hpp>
 
 SpriteDocument::SpriteDocument(const PluginInterface* loader, const QString& file)
     : DocumentBase(loader, file),
@@ -32,7 +32,7 @@ bool SpriteDocument::loadFile()
     {
         try
         {
-            zelda::io::SpriteFileReader reader(filePath().toStdString());
+            Athena::io::SpriteFileReader reader(filePath().toStdString());
             m_spriteContainer = reader.readFile();
             connect(sef, SIGNAL(modified()), this, SLOT(onModified()));
             sef->setSpriteContainer(m_spriteContainer);
@@ -44,7 +44,7 @@ bool SpriteDocument::loadFile()
     }
     else
     {
-        m_spriteContainer = new zelda::Sakura::SpriteFile;
+        m_spriteContainer = new Athena::Sakura::SpriteFile;
         if (!m_spriteContainer)
             return false;
     }
@@ -59,7 +59,7 @@ bool SpriteDocument::save(const QString& filepath)
 
     try
     {
-        zelda::io::SpriteFileWriter writer(filePath().toStdString());
+        Athena::io::SpriteFileWriter writer(filePath().toStdString());
         writer.writeFile(m_spriteContainer);
         setDirty(false);
         return true;
