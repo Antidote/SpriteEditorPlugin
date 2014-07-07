@@ -59,7 +59,8 @@ SOURCES += \
     src/SpriteCanvas.cpp \
     src/NameTreeItem.cpp \
     src/ObjectController.cpp \
-    src/GraphicsScene.cpp
+    src/GraphicsScene.cpp \
+    src/PartGraphicsItem.cpp
 
 HEADERS += \
     include/SpriteEditorPlugin.hpp\
@@ -70,7 +71,8 @@ HEADERS += \
     include/SpriteCanvas.hpp \
     include/NameTreeItem.hpp \
     include/ObjectController.hpp \
-    include/GraphicsScene.hpp
+    include/GraphicsScene.hpp \
+    include/PartGraphicsItem.hpp
 
 OTHER_FILES += \
     spriteeditor.json

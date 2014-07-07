@@ -44,12 +44,15 @@ signals:
     void modified();
 
 private slots:
+    void onModified();
     void onTreeItemChanged(QTreeWidgetItem* item1, QTreeWidgetItem* item2);
     void setFrameOffsetItems(const QString& text, const QVector2D& offset);
     void setFrameSizeItems(const QSize& size);
     void setNameItem(const QString& name, const QVariant& data);
-    void onZoomChanged(const QString& zoom);
+    void onZoomChanged();
     void onNameChanged(const QString& name);
+    void onPlayPause();
+    void onStop();
 private:
     Ui::SpriteEditorFrame *ui;
     QTreeWidgetItem* m_rootItem;

@@ -25,14 +25,17 @@ SpriteEditorPlugin* SpriteEditorPlugin::m_instance = NULL;
 
 SpriteEditorPlugin::SpriteEditorPlugin()
     : m_actionNewDocument(new QAction("Sprite Container Document", this)),
-    m_enabled(true)
+    m_enabled(true),
+    m_mainWindow(NULL)
 {
     m_instance = this;
 }
 
 SpriteEditorPlugin::~SpriteEditorPlugin()
 {
-    m_mainWindow->newDocumentMenu()->removeAction(m_actionNewDocument);
+    if (m_mainWindow)
+        m_mainWindow->newDocumentMenu()->removeAction(m_actionNewDocument);
+
     delete m_actionNewDocument;
     m_actionNewDocument = NULL;
 }

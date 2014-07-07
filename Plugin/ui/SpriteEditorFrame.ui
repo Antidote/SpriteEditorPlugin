@@ -73,7 +73,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="playPauseBtn">
             <property name="icon">
              <iconset theme="media-playback-start">
               <normaloff/>
@@ -82,16 +82,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_5">
-            <property name="icon">
-             <iconset theme="media-playback-pause">
-              <normaloff/>
-             </iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="stopBtn">
             <property name="icon">
              <iconset theme="media-playback-stop">
               <normaloff/>
@@ -116,41 +107,38 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox">
-            <property name="toolTip">
-             <string>The current Zoom factor for the Graphics View</string>
+           <widget class="QSlider" name="zoomSlider">
+            <property name="minimum">
+             <number>50</number>
             </property>
-            <property name="currentText">
-             <string notr="true">100%</string>
+            <property name="maximum">
+             <number>1000</number>
             </property>
-            <property name="currentIndex">
-             <number>2</number>
+            <property name="value">
+             <number>50</number>
             </property>
-            <item>
-             <property name="text">
-              <string>500%</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">200%</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">100%</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">50%</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Custom...</string>
-             </property>
-            </item>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::TicksBelow</enum>
+            </property>
+            <property name="tickInterval">
+             <number>50</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="zoomSpinBox">
+            <property name="suffix">
+             <string>%</string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
            </widget>
           </item>
           <item>
@@ -237,18 +225,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>comboBox</sender>
-   <signal>currentIndexChanged(QString)</signal>
+   <sender>zoomSlider</sender>
+   <signal>valueChanged(int)</signal>
    <receiver>SpriteEditorFrame</receiver>
-   <slot>onZoomChanged(QString)</slot>
+   <slot>onZoomChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>441</x>
-     <y>360</y>
+     <x>386</x>
+     <y>356</y>
     </hint>
     <hint type="destinationlabel">
-     <x>3</x>
-     <y>359</y>
+     <x>413</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SpriteEditorFrame</receiver>
+   <slot>onZoomChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>448</x>
+     <y>356</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>413</x>
+     <y>277</y>
     </hint>
    </hints>
   </connection>
@@ -256,6 +260,8 @@
  <slots>
   <slot>onTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)</slot>
   <slot>onAdvanceFrame()</slot>
-  <slot>onZoomChanged(QString)</slot>
+  <slot>onZoomChanged()</slot>
+  <slot>onPlayPause()</slot>
+  <slot>onStop()</slot>
  </slots>
 </ui>

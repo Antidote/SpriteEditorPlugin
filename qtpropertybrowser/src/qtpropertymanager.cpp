@@ -937,7 +937,7 @@ public:
 
     struct Data
     {
-        Data() : val(0), minVal(-INT_MAX), maxVal(INT_MAX), singleStep(1), decimals(2), readOnly(false) {}
+        Data() : val(0), minVal(-INT_MAX), maxVal(INT_MAX), singleStep(1), decimals(8), readOnly(false) {}
         double val;
         double minVal;
         double maxVal;

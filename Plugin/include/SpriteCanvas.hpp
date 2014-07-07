@@ -3,6 +3,7 @@
 
 #include <QGraphicsView>
 #include <QPixmap>
+#include <QTimer>
 
 namespace Ui {
 class SpriteCanvas;
@@ -32,15 +33,19 @@ public:
 
     void setCurrentFrame(quint32 curFrame);
 
-    void scaleBy(double factor);
+    void scaleBy(qreal factor);
     void scaleView(qreal scaleFactor);
+
+    bool isPlaying();
 public slots:
     void setZoom(int percentZoom);
     void advanceFrame();
     void retreatFrame();
 protected:
 private slots:
-    void onSelectionChanged();
+    void onPlayPause();
+    void onStop();
+    void onSpriteTimeout();
     void updateGraphicsScene();
 
 private:
@@ -49,12 +54,13 @@ private:
     Ui::SpriteCanvas* ui;
     Athena::Sakura::Sprite*      m_currentSprite;
     Athena::Sakura::SpriteFrame* m_currentFrame;
-    QPixmap                     m_currentPixmap;
-    QGraphicsScene*             m_graphicsScene;
-    QGraphicsRectItem*          m_canvasRect;
-    qreal                       m_curScaleFactor;
-    qreal                       m_minScale;
-    qreal                       m_maxScale;
+    QPixmap                      m_currentPixmap;
+    QGraphicsScene*              m_graphicsScene;
+    bool                         m_isPlaying;
+    qreal                        m_curScaleFactor;
+    qreal                        m_minScale;
+    qreal                        m_maxScale;
+    QTimer                       m_spriteTimer;
 };
 
 #endif // SPRITECANVAS_HPP

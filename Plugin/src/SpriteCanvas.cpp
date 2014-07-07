@@ -1,4 +1,5 @@
 ﻿#include "SpriteCanvas.hpp"
+#include "PartGraphicsItem.hpp"
 #include <Athena/Sprite.hpp>
 #include <Athena/SpriteFile.hpp>
 #include <Athena/SpritePart.hpp>
@@ -10,22 +11,31 @@
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QWheelEvent>
+#include <iostream>
+#include <chrono>
+
+inline int floatToMilliseconds(float num)
+{
+    std::chrono::duration<float> seconds = std::chrono::duration<float>(num);
+
+    return std::chrono::duration_cast<std::chrono::milliseconds>(seconds).count();
+}
 
 SpriteCanvas::SpriteCanvas(QWidget* parent)
     : QGraphicsView(parent),
       ui(new Ui::SpriteCanvas),
       m_currentSprite(NULL),
-      m_canvasRect(NULL),
       m_curScaleFactor(1.f),
       m_minScale(.5f),
-      m_maxScale(5.f)
+      m_maxScale(5.f),
+      m_isPlaying(false)
 {
     ui->setupUi(this);
     m_graphicsScene = new QGraphicsScene(this);
     setScene(m_graphicsScene);
     setInteractive(true);
-    connect(m_graphicsScene, SIGNAL(selectionChanged()), this, SLOT(onSelectionChanged()));
-    connect(m_graphicsScene, SIGNAL(changed(QList<QRectF>)), this, SLOT(onSelectionChanged()));
+    connect(&m_spriteTimer, SIGNAL(timeout()), this, SLOT(onSpriteTimeout()));
+    m_spriteTimer.start();
 }
 
 SpriteCanvas::~SpriteCanvas()
@@ -62,9 +72,37 @@ void SpriteCanvas::retreatFrame()
     updateGraphicsScene();
 }
 
-void SpriteCanvas::onSelectionChanged()
+void SpriteCanvas::onPlayPause()
 {
+    if (!m_currentSprite)
+        return;
 
+    m_isPlaying ^= 1;
+}
+
+void SpriteCanvas::onStop()
+{
+    if (!m_currentSprite)
+        return;
+
+    m_currentSprite->setCurrentFrame((atUint32)0);
+    m_isPlaying = false;
+}
+
+void SpriteCanvas::onSpriteTimeout()
+{
+    if (!m_isPlaying || !m_currentSprite)
+        return;
+
+    if (m_currentSprite->currentFrame() == m_currentSprite->lastFrame())
+    {
+        m_currentSprite->setCurrentFrame((atUint32)0);
+        updateGraphicsScene();
+        return;
+    }
+
+    m_currentSprite->advanceFrame();
+    updateGraphicsScene();
 }
 
 void SpriteCanvas::updateGraphicsScene()
@@ -78,13 +116,9 @@ void SpriteCanvas::updateGraphicsScene()
         return;
 
     m_currentFrame = m_currentSprite->currentFrame();
+    m_spriteTimer.setInterval(floatToMilliseconds(m_currentFrame->frameTime()));
     m_graphicsScene->clear();
-    m_canvasRect = m_graphicsScene->addRect(-m_currentSprite->container()->origin().x(), (-m_currentSprite->container()->origin().y()/2) + 1,
-                                            m_currentSprite->container()->size().width(),
-                                            m_currentSprite->container()->size().height());
-
-    m_canvasRect->setPen(QPen());
-    m_canvasRect->setFlag(QGraphicsItem::ItemIsSelectable);
+    QPoint origin = m_currentSprite->container()->origin();
     m_currentFrame = m_currentSprite->currentFrame();
     foreach (Athena::Sakura::SpritePart* part, m_currentFrame->parts())
     {
@@ -92,9 +126,7 @@ void SpriteCanvas::updateGraphicsScene()
         QPixmap pix = m_currentPixmap.copy(part->textureOffset().x(), part->textureOffset().y(),
                                            part->size().width(),
                                            part->size().height());
-        QGraphicsPixmapItem* pixmapItem = new QGraphicsPixmapItem(m_canvasRect);
-        pixmapItem->setData(PartKey, QVariant::fromValue<Athena::Sakura::SpritePart*>(part));
-        pixmapItem->setTransformOriginPoint(m_currentSprite->container()->origin());
+        PartGraphicsItem* pixmapItem = new PartGraphicsItem(part);
         pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
         pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
         pixmapItem->setFlag(QGraphicsItem::ItemIsPanel);
@@ -102,10 +134,9 @@ void SpriteCanvas::updateGraphicsScene()
         pixmapItem->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
         pixmapItem->setAcceptedMouseButtons(Qt::AllButtons);
         pixmapItem->setPixmap(pix);
-        pixmapItem->scale(part->flippedHorizontally() ? -1 : 1,
-                          part->flippedVertically() ? -1 : 1);
-        pixmapItem->translate(part->offset().x(), part->offset().y());
-
+        pixmapItem->scale(part->flippedHorizontally() ? -1 : 1, part->flippedVertically() ? -1 : 1);
+        pixmapItem->setPos(part->offset().x(), part->offset().y());
+        m_graphicsScene->addItem(pixmapItem);
     }
 }
 
@@ -131,6 +162,11 @@ void SpriteCanvas::scaleView(qreal scaleFactor)
         sc = m_maxScale / m_curScaleFactor;
     }
     scaleBy(sc);
+}
+
+bool SpriteCanvas::isPlaying()
+{
+    return m_isPlaying;
 }
 
 void SpriteCanvas::setZoom(int percentZoom)

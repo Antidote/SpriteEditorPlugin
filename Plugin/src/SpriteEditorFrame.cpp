@@ -44,15 +44,26 @@ SpriteEditorFrame::SpriteEditorFrame(QWidget *parent) :
     m_propertyBrowser = new ObjectController;
     ui->splitter_2->insertWidget(0, m_propertyBrowser);
 
+    // Cheap way of properly assigning the zoom value
+    onZoomChanged();
+
     connect(ui->advanceFrameButton, SIGNAL(clicked()), ui->spriteCanvas, SLOT(advanceFrame()));
     connect(ui->retreatFrameButton, SIGNAL(clicked()), ui->spriteCanvas, SLOT(retreatFrame()));
+    // We have to connect the following two signals in an explicit order
+    // The reason is onPlayPause and onStop in spriteCanvas toggles the value acquired
+    // from spriteCanvas::isPlaying, and if we connect EditorFrame's signals first, we get the previous value
+    // not the current
+    connect(ui->playPauseBtn,       SIGNAL(clicked()), ui->spriteCanvas, SLOT(onPlayPause()));
+    connect(ui->stopBtn,            SIGNAL(clicked()), ui->spriteCanvas, SLOT(onStop()));
+    connect(ui->playPauseBtn,       SIGNAL(clicked()), this, SLOT(onPlayPause()));
+    connect(ui->stopBtn,            SIGNAL(clicked()), this, SLOT(onStop()));
 
 
     MainWindowBase* mw = SpriteEditorPlugin::instance()->mainWindow();
     if (mw->engineDataPath().exists())
     {
-        //m_testPixmap.load(mw->engineDataPath().absolutePath() + "/sprites/Link/red.png");
-        //ui->spriteSheetLabel->setPixmap(m_testPixmap);
+        m_testPixmap.load(mw->engineDataPath().absolutePath() + "/sprites/Link/red.png");
+        ui->spriteSheetLabel->setPixmap(m_testPixmap);
     }
 }
 
@@ -73,6 +84,8 @@ void SpriteEditorFrame::setSpriteContainer(Athena::Sakura::SpriteFile* container
         m_rootItem = new QTreeWidgetItem(QStringList() << "root");
         ui->spriteTree->addTopLevelItem(m_rootItem);
 
+        connect(m_spriteContainer, SIGNAL(modified()), this, SLOT(onModified()));
+        connect(m_spriteContainer, SIGNAL(modified()), this, SIGNAL(modified()));
         connect(m_spriteContainer, SIGNAL(originChanged(QPoint)), ui->spriteCanvas, SLOT(updateGraphicsScene()));
         connect(m_spriteContainer, SIGNAL(sizeChanged(QSize)),    ui->spriteCanvas, SLOT(updateGraphicsScene()));
 
@@ -100,7 +113,6 @@ void SpriteEditorFrame::setSpriteContainer(Athena::Sakura::SpriteFile* container
                     QTreeWidgetItem* partItem = new QTreeWidgetItem(QStringList() << part->name());
                     partItem->setData(0, PartRole, QVariant::fromValue<Athena::Sakura::SpritePart*>(part));
                     connect(part, SIGNAL(orientationChanged(bool,bool)), ui->spriteCanvas, SLOT(updateGraphicsScene()));
-                    connect(part, SIGNAL(offsetChanged(QPoint)), ui->spriteCanvas, SLOT(updateGraphicsScene()));
                     connect(part, SIGNAL(sizeChanged(QSize)), ui->spriteCanvas, SLOT(updateGraphicsScene()));
                     connect(part, SIGNAL(textureOffsetChanged(QPoint)), ui->spriteCanvas, SLOT(updateGraphicsScene()));
                     frameItem->addChild(partItem);
@@ -108,6 +120,31 @@ void SpriteEditorFrame::setSpriteContainer(Athena::Sakura::SpriteFile* container
             }
         }
     }
+}
+
+void SpriteEditorFrame::onModified()
+{
+    QTreeWidgetItem* item = ui->spriteTree->currentItem();
+    if (item == m_rootItem)
+    {
+        m_propertyBrowser->setObject(m_spriteContainer);
+    }
+    if (item->data(0, SpriteRole).isValid())
+    {
+        Athena::Sakura::Sprite* sprite = item->data(0, SpriteRole).value<Athena::Sakura::Sprite*>();
+        m_propertyBrowser->setObject(sprite);
+    }
+    if (item->data(0, FrameRole).isValid())
+    {
+        Athena::Sakura::SpriteFrame* frame = item->data(0, FrameRole).value<Athena::Sakura::SpriteFrame*>();
+        m_propertyBrowser->setObject(frame);
+    }
+    if (item->data(0, PartRole).isValid())
+    {
+        Athena::Sakura::SpritePart* part = item->data(0, PartRole).value<Athena::Sakura::SpritePart*>();
+        m_propertyBrowser->setObject(part);
+    }
+    m_propertyBrowser->update();
 }
 
 void SpriteEditorFrame::onTreeItemChanged(QTreeWidgetItem* item1, QTreeWidgetItem* item2)
@@ -165,15 +202,18 @@ void SpriteEditorFrame::setNameItem(const QString& name, const QVariant& data)
 {
 }
 
-void SpriteEditorFrame::onZoomChanged(const QString& zoom)
+void SpriteEditorFrame::onZoomChanged()
 {
-    QString value = zoom;
-    value = value.remove('%');
-    bool ok = false;
+    if (!updatesEnabled())
+        return;
+    setUpdatesEnabled(false);
+    if (sender() == ui->zoomSpinBox)
+        ui->zoomSlider->setValue(ui->zoomSpinBox->value());
+    else
+        ui->zoomSpinBox->setValue(ui->zoomSlider->value());
 
-    qreal zoomFactor = value.toInt(&ok);
-    if (ok)
-        ui->spriteCanvas->setZoom(zoomFactor);
+    ui->spriteCanvas->setZoom(ui->zoomSlider->value());
+    setUpdatesEnabled(true);
 }
 
 void SpriteEditorFrame::onNameChanged(const QString& name)
@@ -195,4 +235,17 @@ void SpriteEditorFrame::onNameChanged(const QString& name)
             ++it;
         }
     }
+}
+
+void SpriteEditorFrame::onPlayPause()
+{
+    if (ui->spriteCanvas->isPlaying())
+        ui->playPauseBtn->setIcon(QIcon::fromTheme("media-playback-pause"));
+    else
+        ui->playPauseBtn->setIcon(QIcon::fromTheme("media-playback-start"));
+}
+
+void SpriteEditorFrame::onStop()
+{
+    ui->playPauseBtn->setIcon(QIcon::fromTheme("media-playback-start"));
 }
